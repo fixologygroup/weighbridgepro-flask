@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Panel - Weighbridge Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card mb-4">
+            <div class="card-header bg-secondary">
+                <h3 class="mb-0 text-center"><i class="fas fa-cog me-2"></i>Admin Panel</h3>
+            </div>
+            <div class="card-body">
+                <!-- Admin Dashboard Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card stats-card bg-info text-white">
+                            <div class="stats-number">{{ categories_count }}</div>
+                            <div class="stats-label">Categories</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card stats-card bg-primary text-white">
+                            <div class="stats-number">{{ items_count }}</div>
+                            <div class="stats-label">Items</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card stats-card bg-secondary text-white">
+                            <div class="stats-number">{{ users_count|default('1') }}</div>
+                            <div class="stats-label">Users</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- System Information -->
+                <div class="card mb-4">
+                    <div class="card-header bg-dark">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Token Prefix:</strong> {{ settings.token_prefix }}</p>
+                                <p><strong>FOC Weight:</strong> {{ settings.foc_weight }} kg</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>FOC Threshold:</strong> {{ settings.foc_threshold }} kg</p>
+                                <p><strong>Software Expiry:</strong> {{ settings.software_expiry }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Admin Navigation Cards -->
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-tags fa-4x text-primary mb-3"></i>
+                                <h5>Categories</h5>
+                                <p>Manage vehicle categories</p>
+                                <a href="{{ url_for('admin_categories') }}" class="btn btn-primary">Manage Categories</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-boxes fa-4x text-success mb-3"></i>
+                                <h5>Items</h5>
+                                <p>Manage item types for categories</p>
+                                <a href="{{ url_for('admin_items') }}" class="btn btn-success">Manage Items</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-sliders fa-4x text-warning mb-3"></i>
+                                <h5>Settings</h5>
+                                <p>Configure system settings</p>
+                                <a href="{{ url_for('admin_settings') }}" class="btn btn-warning text-dark">System Settings</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

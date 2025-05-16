@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Items - Weighbridge Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card mb-4">
+            <div class="card-header bg-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fas fa-boxes me-2"></i>Manage Items</h3>
+                    <a href="{{ url_for('admin') }}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Admin
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Add New Item Form -->
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-primary">
+                                <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Item</h5>
+                            </div>
+                            <div class="card-body">
+                                <form method="POST" action="{{ url_for('admin_items') }}">
+                                    {{ form.csrf_token }}
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Item Name *</label>
+                                        {{ form.name(class="form-control", placeholder="e.g., Sand, Gravel") }}
+                                        {% if form.name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.name.errors %}
+                                            <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="category_id" class="form-label">Category *</label>
+                                        {{ form.category_id(class="form-control") }}
+                                        {% if form.category_id.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.category_id.errors %}
+                                            <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-center">
+                                        {{ form.submit(class="btn btn-primary") }}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Items List -->
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header bg-info">
+                                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Items List</h5>
+                            </div>
+                            <div class="card-body">
+                                {% if items %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Category</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in items %}
+                                            <tr>
+                                                <td><strong>{{ item.name }}</strong></td>
+                                                <td>
+                                                    <span class="tag bg-primary">{{ item.category.name }}</span>
+                                                    {% if item.category.description %}
+                                                    <small class="text-muted">({{ item.category.description }})</small>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ url_for('admin_edit_item', id=item.id) }}" class="btn btn-sm btn-primary">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteItemModal{{ item.id }}">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <!-- Delete Confirmation Modal -->
+                                                    <div class="modal fade" id="deleteItemModal{{ item.id }}" tabindex="-1" aria-labelledby="deleteItemModalLabel{{ item.id }}" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header bg-danger text-white">
+                                                                    <h5 class="modal-title" id="deleteItemModalLabel{{ item.id }}">Confirm Deletion</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>Are you sure you want to delete the item <strong>{{ item.name }}</strong>?</p>
+                                                                    {% if item.entries %}
+                                                                    <div class="alert alert-warning">
+                                                                        <i class="fas fa-exclamation-triangle me-2"></i> This item is used in {{ item.entries|length }} weighbridge entries.
+                                                                    </div>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                    <form action="{{ url_for('admin_delete_item', id=item.id) }}" method="POST">
+                                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% else %}
+                                <div class="text-center p-4">
+                                    <p class="text-muted">No items found. Add a new item to get started.</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}Out-Time Token - Weighbridge Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success">
+                <h3 class="mb-0 text-center"><i class="fas fa-sign-out-alt me-2"></i>Out-Time Token Form</h3>
+            </div>
+            <div class="card-body">
+                <!-- Search Token Form -->
+                {% if not entry %}
+                <div class="form-section">
+                    <h4>Find Entry</h4>
+                    <form method="GET" action="{{ url_for('out_time') }}">
+                        <div class="input-group mb-3">
+                            <input type="text" name="token_number" class="form-control form-control-lg" placeholder="Enter Token Number" required>
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search me-1"></i> Find
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+                
+                <!-- Entry Details and Out-Time Form -->
+                {% if entry %}
+                    {% if entry.is_completed %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i> This entry has already been completed at {{ entry.out_time.strftime('%d-%m-%Y %H:%M') }}.
+                    </div>
+                    <div class="text-center mt-3 mb-3">
+                        <a href="{{ url_for('out_time') }}" class="btn btn-primary">
+                            <i class="fas fa-search me-1"></i> Find Another Token
+                        </a>
+                    </div>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('out_time') }}">
+                        {{ form.csrf_token }}
+                        
+                        <!-- Token Information -->
+                        <div class="form-section">
+                            <h4>Token Information</h4>
+                            <div class="token-display mb-4">
+                                {{ entry.token_number }}
+                                {{ form.token_number(value=entry.token_number, class="d-none") }}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <strong>Vehicle Number:</strong> {{ entry.vehicle_number }}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Driver Name:</strong> {{ entry.driver_name }}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Mobile Number:</strong> {{ entry.mobile_number }}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Category:</strong> {{ entry.category.name }}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Item:</strong> {{ entry.item.name }}
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>In-Time:</strong> {{ entry.in_time.strftime('%d-%m-%Y %H:%M') }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Weight Information -->
+                        <div class="form-section">
+                            <h4>Weight Information</h4>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Tare Weight:</label>
+                                        <div class="weight-display bg-secondary">{{ entry.tare_weight }} kg</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Order Weight:</label>
+                                        <div class="weight-display bg-info">{{ entry.order_weight }} kg</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="loaded_weight" class="form-label">Loaded Weight (kg) *</label>
+                                <div class="input-group">
+                                    {{ form.loaded_weight(class="form-control form-control-lg", placeholder="Enter loaded weight") }}
+                                    <button id="simulate-loaded-weight-btn" class="btn btn-outline-secondary" type="button">
+                                        <i class="fas fa-scale-balanced me-1"></i> Get Weight
+                                    </button>
+                                </div>
+                                {% if form.loaded_weight.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.loaded_weight.errors %}
+                                    <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <small class="text-muted">Click "Get Weight" to simulate reading from the weighbridge.</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Calculations Preview -->
+                        <div class="form-section results-preview">
+                            <h4>Calculated Results</h4>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card bg-primary text-white p-3">
+                                        <div class="text-center">
+                                            <h5>Net Weight</h5>
+                                            <div id="net_weight_preview" class="display-6">
+                                                {% if calculations %}
+                                                {{ calculations.net_weight|round(2) }} kg
+                                                {% else %}
+                                                0.00 kg
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card bg-success text-white p-3">
+                                        <div class="text-center">
+                                            <h5>FOC Weight</h5>
+                                            <div id="foc_weight_preview" class="display-6">
+                                                {% if calculations %}
+                                                {{ calculations.foc_weight|round(2) }} kg
+                                                {% else %}
+                                                0.00 kg
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card bg-warning text-dark p-3">
+                                        <div class="text-center">
+                                            <h5>Difference</h5>
+                                            <div id="difference_weight_preview" class="display-6 {% if calculations and calculations.difference_weight > 0 %}text-success{% elif calculations and calculations.difference_weight < 0 %}text-danger{% endif %}">
+                                                {% if calculations %}
+                                                {{ calculations.difference_weight|round(2) }} kg
+                                                {% else %}
+                                                0.00 kg
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i> FOC (Free of Charge) weight calculation: 500kg free on 10 tons.
+                            </div>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('out_time') }}" class="btn btn-secondary me-2">
+                                <i class="fas fa-arrow-left me-1"></i> Cancel
+                            </a>
+                            {{ form.submit(class="btn btn-success btn-lg") }}
+                        </div>
+                    </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

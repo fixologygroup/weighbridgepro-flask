@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}System Settings - Weighbridge Management System{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/admin_settings.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fas fa-sliders me-2"></i>System Settings</h3>
+                    <a href="{{ url_for('admin') }}" class="btn btn-outline-dark btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Admin
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_settings') }}">
+                    {{ form.csrf_token }}
+                    
+                    <!-- Token Settings -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-tag me-2"></i>Token Settings</h4>
+                        <div class="mb-3">
+                            <label for="token_prefix" class="form-label">Token Prefix *</label>
+                            {{ form.token_prefix(class="form-control", maxlength="2") }}
+                            {% if form.token_prefix.errors %}
+                            <div class="text-danger">
+                                {% for error in form.token_prefix.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="text-muted">2-character prefix for token numbers (e.g., AB for AB1001)</small>
+                        </div>
+                    </div>
+                    
+                    <!-- FOC Settings -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-balance-scale me-2"></i>FOC (Free of Charge) Settings</h4>
+                        
+                        <div class="mb-3">
+                            <label for="weight_unit" class="form-label">Weight Unit *</label>
+                            {{ form.weight_unit(class="form-control") }}
+                            {% if form.weight_unit.errors %}
+                            <div class="text-danger">
+                                {% for error in form.weight_unit.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="text-muted">Unit of measurement for weights (affects all weight calculations)</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="foc_weight" class="form-label">FOC Weight <span class="unit-display">({{ form.weight_unit.data or 'kg' }})</span> *</label>
+                                {{ form.foc_weight(class="form-control", type="number", step="0.1") }}
+                                {% if form.foc_weight.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.foc_weight.errors %}
+                                    <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <small class="text-muted">Weight given free of charge</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="foc_threshold" class="form-label">FOC Threshold <span class="unit-display">({{ form.weight_unit.data or 'kg' }})</span> *</label>
+                                {{ form.foc_threshold(class="form-control", type="number", step="0.1") }}
+                                {% if form.foc_threshold.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.foc_threshold.errors %}
+                                    <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                <small class="text-muted">Minimum weight to qualify for FOC</small>
+                            </div>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Example: If FOC Weight is 
+                            {% if form.weight_unit.data == 'ton' %}0.5 tons and FOC Threshold is 10 tons, then 0.5 tons will be free for orders of 10 tons or more.
+                            {% else %}500kg and FOC Threshold is 10000kg, then 500kg will be free for orders of 10 tons or more.
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- License Settings -->
+                    <div class="form-section">
+                        <h4><i class="fas fa-calendar-alt me-2"></i>Software License</h4>
+                        <div class="mb-3">
+                            <label for="software_expiry" class="form-label">Software Validity Until *</label>
+                            {{ form.software_expiry(class="form-control", type="date") }}
+                            {% if form.software_expiry.errors %}
+                            <div class="text-danger">
+                                {% for error in form.software_expiry.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="text-muted">Date when the software license will expire</small>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('admin') }}" class="btn btn-secondary me-2">Cancel</a>
+                        {{ form.submit(class="btn btn-warning text-dark") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
