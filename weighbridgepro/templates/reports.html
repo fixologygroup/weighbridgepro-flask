@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports - Weighbridge Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card mb-4">
+            <div class="card-header bg-info">
+                <h3 class="mb-0 text-center"><i class="fas fa-chart-bar me-2"></i>Reports</h3>
+            </div>
+            <div class="card-body">
+                <!-- Report Filters -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary">
+                        <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Report Filters</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('reports') }}">
+                            {{ form.csrf_token }}
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="start_date" class="form-label">Start Date *</label>
+                                    {{ form.start_date(class="form-control", type="date") }}
+                                    {% if form.start_date.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.start_date.errors %}
+                                        <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="end_date" class="form-label">End Date *</label>
+                                    {{ form.end_date(class="form-control", type="date") }}
+                                    {% if form.end_date.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.end_date.errors %}
+                                        <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="category" class="form-label">Category</label>
+                                    {{ form.category(class="form-control") }}
+                                    {% if form.category.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.category.errors %}
+                                        <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-3 mb-3 d-flex align-items-end">
+                                    {{ form.submit(class="btn btn-primary w-100") }}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Report Results -->
+                {% if entries is not none %}
+                <div class="card">
+                    <div class="card-header bg-success">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-table me-2"></i>Report Results</h5>
+                            <form action="{{ url_for('export_report') }}" method="POST">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="start_date" value="{{ form.start_date.data.isoformat() }}">
+                                <input type="hidden" name="end_date" value="{{ form.end_date.data.isoformat() }}">
+                                <input type="hidden" name="category" value="{{ form.category.data }}">
+                                <button type="submit" class="btn btn-sm btn-outline-light">
+                                    <i class="fas fa-download me-1"></i> Export CSV
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if entries %}
+                        <div class="table-responsive">
+                            <table id="report-table" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Token No</th>
+                                        <th>Vehicle</th>
+                                        <th>Category</th>
+                                        <th>Item</th>
+                                        <th>Tare (kg)</th>
+                                        <th>Loaded (kg)</th>
+                                        <th>Net (kg)</th>
+                                        <th>FOC (kg)</th>
+                                        <th>In-Time</th>
+                                        <th>Out-Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for entry in entries %}
+                                    <tr>
+                                        <td><strong>{{ entry.token_number }}</strong></td>
+                                        <td>{{ entry.vehicle_number }}</td>
+                                        <td>{{ entry.category.name }}</td>
+                                        <td>{{ entry.item.name }}</td>
+                                        <td>{{ entry.tare_weight|round(2) }}</td>
+                                        <td>{{ entry.loaded_weight|round(2) if entry.loaded_weight else '-' }}</td>
+                                        <td>{{ entry.net_weight|round(2) if entry.net_weight else '-' }}</td>
+                                        <td>{{ entry.foc_weight|round(2) if entry.foc_weight else '-' }}</td>
+                                        <td>{{ entry.in_time.strftime('%d-%m-%Y %H:%M') }}</td>
+                                        <td>{{ entry.out_time.strftime('%d-%m-%Y %H:%M') if entry.out_time else '-' }}</td>
+                                        <td>
+                                            {% if entry.is_completed %}
+                                            <span class="badge bg-success">Completed</span>
+                                            {% else %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="bg-dark text-light">
+                                        <th colspan="4">Totals:</th>
+                                        <th>{{ entries|sum(attribute='tare_weight')|round(2) }}</th>
+                                        <th>{{ entries|selectattr('loaded_weight')|sum(attribute='loaded_weight')|round(2) }}</th>
+                                        <th>{{ entries|selectattr('net_weight')|sum(attribute='net_weight')|round(2) }}</th>
+                                        <th>{{ entries|selectattr('foc_weight')|sum(attribute='foc_weight')|round(2) }}</th>
+                                        <th colspan="3"></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center p-4">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No entries found for the selected filters.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize DataTable if entries exist
+        if (document.getElementById('report-table')) {
+            $('#report-table').DataTable({
+                responsive: true,
+                order: [[8, 'desc']], // Sort by in-time by default
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'excel', 'pdf'
+                ]
+            });
+        }
+    });
+</script>
+{% endblock %}

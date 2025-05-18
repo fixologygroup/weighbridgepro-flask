@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Weighbridge Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card mb-4">
+            <div class="card-header bg-primary">
+                <h3 class="mb-0 text-center"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h3>
+            </div>
+            <div class="card-body">
+                <!-- Welcome Message -->
+                <div class="text-center mb-4">
+                    <h4>Welcome to the Weighbridge Management System</h4>
+                    <p class="lead">Select an option below to get started</p>
+                </div>
+                
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card stats-card bg-primary text-white">
+                            <div class="stats-number">{{ today_entries }}</div>
+                            <div class="stats-label">Today's Entries</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card bg-success text-white">
+                            <div class="stats-number">{{ completed_entries }}</div>
+                            <div class="stats-label">Completed</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card bg-warning text-dark">
+                            <div class="stats-number">{{ pending_entries }}</div>
+                            <div class="stats-label">Pending</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card stats-card bg-info text-white">
+                            <div class="stats-number">{{ total_entries }}</div>
+                            <div class="stats-label">Total Entries</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Actions -->
+                <div class="row justify-content-center text-center">
+                    <div class="col-md-10">
+                        <a href="{{ url_for('in_time') }}" class="btn btn-primary dashboard-btn">
+                            <i class="fas fa-sign-in-alt me-2"></i> In-Time Token
+                        </a>
+                        <a href="{{ url_for('out_time') }}" class="btn btn-success dashboard-btn">
+                            <i class="fas fa-sign-out-alt me-2"></i> Out-Time Token
+                        </a>
+                        <a href="{{ url_for('reports') }}" class="btn btn-info dashboard-btn">
+                            <i class="fas fa-chart-bar me-2"></i> Reports
+                        </a>
+                        <a href="{{ url_for('admin') }}" class="btn btn-secondary dashboard-btn">
+                            <i class="fas fa-cog me-2"></i> Admin Panel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Entries Card -->
+        <div class="card">
+            <div class="card-header bg-info">
+                <h4 class="mb-0"><i class="fas fa-history me-2"></i>Recent Entries</h4>
+            </div>
+            <div class="card-body">
+                {% if recent_entries %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Token</th>
+                                <th>Vehicle</th>
+                                <th>Category</th>
+                                <th>Item</th>
+                                <th>Weight</th>
+                                <th>Status</th>
+                                <th>In-Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in recent_entries %}
+                            <tr>
+                                <td><strong>{{ entry.token_number }}</strong></td>
+                                <td>{{ entry.vehicle_number }}</td>
+                                <td>{{ entry.category.name }}</td>
+                                <td>{{ entry.item.name }}</td>
+                                <td>{{ entry.net_weight|default('-', true) }} kg</td>
+                                <td>
+                                    {% if entry.is_completed %}
+                                    <span class="badge bg-success">Completed</span>
+                                    {% else %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ entry.in_time.strftime('%d-%m-%Y %H:%M') }}</td>
+                                <td>
+                                    {% if not entry.is_completed %}
+                                    <a href="{{ url_for('out_time', token_number=entry.token_number) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-sign-out-alt"></i> Out-Time
+                                    </a>
+                                    {% else %}
+                                    <button class="btn btn-sm btn-secondary" disabled>
+                                        <i class="fas fa-check"></i> Completed
+                                    </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center p-4">
+                    <p class="text-muted">No recent entries found.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}In-Time Token - Weighbridge Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary">
+                <h3 class="mb-0 text-center"><i class="fas fa-sign-in-alt me-2"></i>In-Time Token Form</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('in_time') }}">
+                    {{ form.csrf_token }}
+                    
+                    <!-- Token Number -->
+                    <div class="form-section">
+                        <h4>Token Information</h4>
+                        <div class="token-display mb-4">
+                            {{ form.token_number.data }}
+                            {{ form.token_number(class="d-none") }}
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> This token number is auto-generated and will be used for tracking this weighbridge entry.
+                        </div>
+                    </div>
+                    
+                    <!-- Vehicle Information -->
+                    <div class="form-section">
+                        <h4>Vehicle Information</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="vehicle_number" class="form-label">Vehicle Number *</label>
+                                {{ form.vehicle_number(class="form-control", placeholder="e.g., AB-1234") }}
+                                {% if form.vehicle_number.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.vehicle_number.errors %}
+                                    <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="driver_name" class="form-label">Driver Name *</label>
+                                {{ form.driver_name(class="form-control", placeholder="Driver's full name") }}
+                                {% if form.driver_name.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.driver_name.errors %}
+                                    <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mobile_number" class="form-label">Mobile Number *</label>
+                            {{ form.mobile_number(class="form-control", placeholder="Driver's mobile number") }}
+                            {% if form.mobile_number.errors %}
+                            <div class="text-danger">
+                                {% for error in form.mobile_number.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Material Information -->
+                    <div class="form-section">
+                        <h4>Material Information</h4>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="category" class="form-label">Category *</label>
+                                {{ form.category(class="form-control") }}
+                                {% if form.category.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.category.errors %}
+                                    <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="item" class="form-label">Item *</label>
+                                {{ form.item(class="form-control") }}
+                                {% if form.item.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.item.errors %}
+                                    <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="order_weight" class="form-label">Order Weight (kg) *</label>
+                            {{ form.order_weight(class="form-control", placeholder="Expected weight in kg") }}
+                            {% if form.order_weight.errors %}
+                            <div class="text-danger">
+                                {% for error in form.order_weight.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Weight Information -->
+                    <div class="form-section">
+                        <h4>Weight Information</h4>
+                        <div class="mb-3">
+                            <label for="tare_weight" class="form-label">Tare Weight (kg) *</label>
+                            <div class="input-group">
+                                {{ form.tare_weight(class="form-control", placeholder="Empty vehicle weight") }}
+                                <button id="simulate-weight-btn" class="btn btn-outline-secondary" type="button">
+                                    <i class="fas fa-scale-balanced me-1"></i> Get Weight
+                                </button>
+                            </div>
+                            {% if form.tare_weight.errors %}
+                            <div class="text-danger">
+                                {% for error in form.tare_weight.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="text-muted">Click "Get Weight" to simulate reading from the weighbridge.</small>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> The current date and time will be automatically recorded as the In-Time for this entry.
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary me-2">
+                            <i class="fas fa-arrow-left me-1"></i> Cancel
+                        </a>
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

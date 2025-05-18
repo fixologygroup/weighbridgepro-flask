@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Renew License - Weighbridge Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-danger">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fas fa-key me-2"></i>Software License</h3>
+                    {% if days_diff > 0 %}
+                    <a href="{{ url_for('admin') }}" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Admin
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-4">
+                    <i class="fas {% if days_diff <= 0 %}fa-lock{% else %}fa-unlock{% endif %} fa-5x text-{% if days_diff <= 0 %}danger{% else %}success{% endif %} mb-3"></i>
+                    
+                    <h4>Software License Status</h4>
+                    
+                    {% if days_diff <= 0 %}
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Your software license has expired!
+                    </div>
+                    <p>Your license expired on <strong>{{ expiry_date.strftime('%d-%m-%Y') }}</strong> ({{ days_diff|abs }} days ago).</p>
+                    {% else %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i> Your software license is active.
+                    </div>
+                    <p>Your license is valid until <strong>{{ expiry_date.strftime('%d-%m-%Y') }}</strong> ({{ days_diff }} days remaining).</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-section">
+                    <h4><i class="fas fa-sync me-2"></i>Renewal Options</h4>
+                    
+                    <div class="row mb-4 justify-content-center">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-primary">
+                                    <h5 class="mb-0">30 Days</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="display-6">$99</p>
+                                    <p>Basic renewal for small operations</p>
+                                    <button type="button" class="btn btn-primary" disabled>
+                                        Select
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-success">
+                                    <h5 class="mb-0">180 Days</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="display-6">$249</p>
+                                    <p>Standard renewal for regular use</p>
+                                    <button type="button" class="btn btn-success" disabled>
+                                        Select
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-info">
+                                    <h5 class="mb-0">365 Days</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="display-6">$399</p>
+                                    <p>Annual license for best value</p>
+                                    <button type="button" class="btn btn-info" disabled>
+                                        Select
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Please contact our support team to renew your license.
+                        <p class="mb-0 mt-2">
+                            <i class="fas fa-envelope me-1"></i> Email: support@weighbridge-system.com<br>
+                            <i class="fas fa-phone me-1"></i> Phone: +1-800-WEIGH-SYS
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

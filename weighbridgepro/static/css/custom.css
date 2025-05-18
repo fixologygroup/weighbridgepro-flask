@@ -1,0 +1,204 @@
+/* Custom CSS for Weighbridge Management System */
+
+/* Gradient Background for Dashboard */
+.gradient-background {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    color: white;
+}
+
+/* Card styling */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0;
+    font-weight: bold;
+}
+
+/* Dashboard stats cards */
+.stats-card {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.stats-card .stats-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.stats-card .stats-label {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* Token number display */
+.token-display {
+    font-size: 1.8rem;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Action buttons */
+.action-btn {
+    min-width: 120px;
+    margin: 5px;
+}
+
+/* Form sections */
+.form-section {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.form-section h4 {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Results preview section */
+.results-preview {
+    border-left: 4px solid var(--bs-primary);
+    padding-left: 15px;
+}
+
+/* Responsive table */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Tag styling for categories and items */
+.tag {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    background-color: var(--bs-secondary);
+    color: white;
+    display: inline-block;
+    margin: 2px;
+}
+
+/* Logo styling */
+.logo-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-text {
+    font-size: 2.8rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.logo-divider {
+    height: 3px;
+    background-color: white;
+    width: 80%;
+    margin: 0 auto 8px auto;
+}
+
+.logo-subtext {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: white;
+    opacity: 0.9;
+}
+
+/* Footer styling */
+footer {
+    padding: 20px;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Custom scrollbar for better UX */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Make large buttons for dashboard */
+.dashboard-btn {
+    padding: 20px;
+    font-size: 1.2rem;
+    margin: 10px;
+    border-radius: 10px;
+    transition: all 0.3s;
+    min-width: 250px;
+}
+
+.dashboard-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Success and error message styling */
+.alert {
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+}
+
+/* Weight display in out-time form */
+.weight-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+/* Loading spinner */
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+}
